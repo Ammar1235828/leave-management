@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>نظام إدارة الإجازات</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,Tahoma,sans-serif;background:#0b0f14;color:#eef2f7}
+button,input,select{font:inherit}button{cursor:pointer;border:0;border-radius:10px;padding:11px 16px;background:#16a36a;color:#fff;font-weight:700}
+input,select{width:100%;background:#111820;border:1px solid #2a3542;color:#fff;border-radius:9px;padding:11px}
+.container{max-width:1150px;margin:auto;padding:20px}.card{background:#10161e;border:1px solid #202b37;border-radius:16px;padding:18px;margin-bottom:16px}
+h1,h2{margin-top:0}.muted{color:#9aa7b5}.hidden{display:none!important}.grid{display:grid;gap:14px}.stats{grid-template-columns:repeat(4,1fr)}.forms{grid-template-columns:1fr 1fr}.stat b{font-size:28px;display:block;margin-top:8px}.row{display:flex;gap:10px;align-items:center}.row>*{flex:1}.tablewrap{overflow:auto}table{width:100%;border-collapse:collapse;min-width:700px}th,td{padding:12px;border-bottom:1px solid #25303c;text-align:right}th{color:#9aa7b5}.danger{background:#b83b3b}.secondary{background:#27313d}.login{max-width:430px;margin:8vh auto}.msg{padding:10px;border-radius:9px;margin-top:10px;background:#17212c}.ok{border:1px solid #167a52}.err{border:1px solid #9b3c3c}.nav{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:18px}.pill{background:#17231f;border:1px solid #245c47;padding:7px 10px;border-radius:20px;font-size:13px}@media(max-width:800px){.stats{grid-template-columns:1fr 1fr}.forms{grid-template-columns:1fr}.nav{align-items:flex-start;flex-direction:column}}
+</style>
+</head>
+<body>
+<div id="login" class="container login">
+  <div class="card">
+    <h1>نظام إدارة الإجازات</h1>
+    <p class="muted">سجّل الدخول لإدارة الموظفين والإجازات والرصيد.</p>
+    <div class="grid">
+      <input id="email" type="email" placeholder="البريد الإلكتروني">
+      <input id="password" type="password" placeholder="كلمة المرور">
+      <div class="row"><button onclick="signIn()">دخول</button><button class="secondary" onclick="signUp()">إنشاء حساب</button></div>
+      <div id="authMsg"></div>
+    </div>
+  </div>
+</div>
+
+<div id="app" class="container hidden">
+  <div class="nav">
+    <div><h1>لوحة إدارة الإجازات</h1><span class="pill" id="userEmail"></span></div>
+    <button class="secondary" onclick="signOut()">تسجيل الخروج</button>
+  </div>
+
+  <div class="grid stats">
+    <div class="card stat"><span class="muted">الموظفون</span><b id="kpiEmployees">0</b></div>
+    <div class="card stat"><span class="muted">الرصيد السنوي</span><b id="kpiBalance">0</b></div>
+    <div class="card stat"><span class="muted">المستخدم</span><b id="kpiUsed">0</b></div>
+    <div class="card stat"><span class="muted">المتبقي</span><b id="kpiRemaining">0</b></div>
+  </div>
+
+  <div class="grid forms">
+    <div class="card">
+      <h2>إضافة موظف</h2>
+      <div class="grid">
+        <input id="code" placeholder="كود الموظف">
+        <input id="name" placeholder="اسم الموظف">
+        <div class="row"><input id="regular" type="number" step="0.5" placeholder="اعتيادي"><input id="casual" type="number" step="0.5" placeholder="عارضة"></div>
+        <button onclick="addEmployee()">حفظ الموظف</button>
+        <div id="empMsg"></div>
+      </div>
+    </div>
+    <div class="card">
+      <h2>تسجيل إجازة</h2>
+      <div class="grid">
+        <select id="employee"></select>
+        <select id="leaveType"><option value="اعتيادي">اعتيادي</option><option value="عارضة">عارضة</option></select>
+        <input id="leaveDate" type="date">
+        <input id="days" type="number" step="0.5" min="0.5" placeholder="عدد الأيام">
+        <input id="notes" placeholder="ملاحظات (اختياري)">
+        <button onclick="addLeave()">تسجيل الإجازة</button>
+        <div id="leaveMsg"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="nav"><h2>بيانات الموظفين</h2><button class="secondary" onclick="loadAll()">تحديث</button></div>
+    <div class="tablewrap"><table><thead><tr><th>الكود</th><th>الاسم</th><th>الرصيد</th><th>المستخدم</th><th>المتبقي</th></tr></thead><tbody id="tbody"></tbody></table></div>
+  </div>
+</div>
+
+<script>
+const SUPABASE_URL = "https://imvjxjnyclyzxemtitbt.supabase.co";
+const SUPABASE_KEY = "sb_publishable_JVuF-CEoQTzrfVlUAdLoyg_mSSfX4aT";
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const $=id=>document.getElementById(id);
+function msg(id,text,ok=false){$(id).innerHTML='<div class="msg '+(ok?'ok':'err')+'">'+text+'</div>'}
+async function signIn(){
+ const {error}=await sb.auth.signInWithPassword({email:$('email').value,password:$('password').value});
+ if(error) msg('authMsg',error.message);
+}
+async function signUp(){
+ const {data,error}=await sb.auth.signUp({email:$('email').value,password:$('password').value});
+ if(error) msg('authMsg',error.message); else msg('authMsg',data.session?'تم إنشاء الحساب وتسجيل الدخول.':'تم إنشاء الحساب. لو طلب تأكيد البريد، أكد البريد ثم سجّل الدخول.',true);
+}
+async function signOut(){await sb.auth.signOut()}
+async function addEmployee(){
+ const code=$('code').value.trim(), name=$('name').value.trim();
+ if(!code||!name)return msg('empMsg','اكتب الكود والاسم');
+ const {data:emp,error:e}=await sb.from('employees').insert({code,name}).select().single();
+ if(e)return msg('empMsg',e.message);
+ const {error:a}=await sb.from('annual_entitlements').upsert({employee_id:emp.id,year:new Date().getFullYear(),regular_days:+$('regular').value||0,casual_days:+$('casual').value||0},{onConflict:'employee_id,year'});
+ if(a)return msg('empMsg',a.message);
+ msg('empMsg','تم حفظ الموظف بنجاح',true);['code','name','regular','casual'].forEach(x=>$(x).value='');loadAll();
+}
+async function addLeave(){
+ const employee_id=$('employee').value, leave_type=$('leaveType').value, leave_date=$('leaveDate').value, days=+$('days').value;
+ if(!employee_id||!leave_date||!days)return msg('leaveMsg','أكمل بيانات الإجازة');
+ const {error}=await sb.from('leave_entries').insert({employee_id,leave_type,leave_date,days,notes:$('notes').value});
+ if(error)return msg('leaveMsg',error.message);
+ msg('leaveMsg','تم تسجيل الإجازة',true);$('days').value='';$('notes').value='';loadAll();
+}
+async function loadAll(){
+ const {data,error}=await sb.from('employee_leave_summary').select('*').order('code');
+ if(error){console.error(error);return}
+ let totalB=0,totalU=0,totalR=0;
+ $('tbody').innerHTML='';
+ data.forEach(e=>{
+  totalB+=+e.annual_balance||0;totalU+=+e.used_days||0;totalR+=+e.remaining_days||0;
+  $('tbody').insertAdjacentHTML('beforeend',`<tr><td>${e.code}</td><td>${e.name}</td><td>${(+e.annual_balance||0).toFixed(1)}</td><td>${(+e.used_days||0).toFixed(1)}</td><td>${(+e.remaining_days||0).toFixed(1)}</td></tr>`);
+ });
+ $('kpiEmployees').textContent=data.length;$('kpiBalance').textContent=totalB.toFixed(1);$('kpiUsed').textContent=totalU.toFixed(1);$('kpiRemaining').textContent=totalR.toFixed(1);
+ $('employee').innerHTML=data.map(e=>`<option value="${e.id}">${e.code} - ${e.name}</option>`).join('');
+}
+async function boot(session){
+ if(session){$('login').classList.add('hidden');$('app').classList.remove('hidden');$('userEmail').textContent=session.user.email;loadAll()}
+ else {$('login').classList.remove('hidden');$('app').classList.add('hidden')}
+}
+sb.auth.onAuthStateChange((_event,session)=>boot(session));
+sb.auth.getSession().then(({data})=>boot(data.session));
+$('leaveDate').value=new Date().toISOString().slice(0,10);
+</script>
+</body></html>
