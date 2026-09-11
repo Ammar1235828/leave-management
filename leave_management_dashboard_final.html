@@ -1,0 +1,571 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b1118">
+<title>نظام إدارة الإجازات</title>
+<style>
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:#0b1118;color:#eef3f7;font-family:Tahoma,Arial,sans-serif}body{min-height:100vh}.wrap{max-width:1200px;margin:auto;padding:12px}.card{background:#111b25;border:1px solid #293846;border-radius:16px;padding:15px;margin-bottom:12px}.top{display:flex;justify-content:space-between;align-items:center;gap:10px}.top h1,.top h2{margin:0 0 5px}.muted{color:#95a4b2}.pill{display:inline-block;padding:5px 9px;border-radius:20px;background:#123126;border:1px solid #236047;color:#b9ead6;font-size:12px}.tabs{display:flex;gap:7px;overflow:auto;padding-bottom:3px;margin:10px 0}.tabs button{white-space:nowrap}.grid{display:grid;gap:10px}.two{grid-template-columns:repeat(2,minmax(0,1fr))}.four{grid-template-columns:repeat(4,minmax(0,1fr))}input,select,button{font:inherit}input,select{width:100%;padding:11px;border-radius:10px;border:1px solid #30404e;background:#0c141d;color:#fff;outline:none}input:focus,select:focus{border-color:#19b97e}button{padding:10px 14px;border:0;border-radius:10px;background:#16b879;color:#fff;font-weight:700;cursor:pointer}button.secondary{background:#25323e}button.danger{background:#a83a3a}button.small{padding:7px 10px;font-size:13px}.hidden{display:none!important}.kpi{min-height:100px}.kpi span{font-size:13px;color:#95a4b2}.kpi b{display:block;font-size:27px;margin-top:9px}.table{overflow:auto;border:1px solid #293846;border-radius:11px}table{width:100%;min-width:800px;border-collapse:collapse}th,td{padding:10px;border-bottom:1px solid #24313c;text-align:right;white-space:nowrap}th{background:#0c141d;color:#aebbc5}.actions{display:flex;gap:5px}.badge{padding:5px 8px;border-radius:20px;font-size:12px}.ok{background:#103d2d;color:#8de2bc}.warn{background:#473516;color:#ffd889}.bad{background:#481e1e;color:#ff9b9b}.alert{padding:11px;background:#2a210f;border:1px solid #71531d;color:#ffd98c;border-radius:10px;margin-bottom:12px}.msg{padding:10px;border:1px solid #31404d;border-radius:10px;margin:8px 0}.msg.error{border-color:#9b3d3d;background:#251316}.msg.success{border-color:#187b57;background:#10271f}.bars{height:210px;display:flex;align-items:flex-end;gap:6px;border-bottom:1px solid #34414d;padding:10px 4px}.barx{flex:1;height:100%;display:flex;align-items:flex-end;justify-content:center}.bar{width:min(38px,85%);background:#18b97e;border-radius:6px 6px 0 0;min-height:2px}.labels{display:flex;gap:6px}.labels span{flex:1;text-align:center;color:#82919f;font-size:10px}.rank{display:flex;gap:8px;align-items:center;margin:10px 0}.rank .n{width:22px}.rank .who{flex:1}.prog{height:8px;background:#1d2934;border-radius:9px;overflow:hidden}.prog i{display:block;height:100%;background:#16b879}.empty{text-align:center;padding:25px;color:#8795a2}.modal{position:fixed;inset:0;background:rgba(0,0,0,.72);display:flex;align-items:center;justify-content:center;padding:14px;z-index:50}.modalbox{background:#111b25;border:1px solid #334452;border-radius:16px;padding:16px;width:min(600px,100%);max-height:90vh;overflow:auto}.loading{min-height:45vh;display:flex;align-items:center;justify-content:center;text-align:center}.spinner{display:inline-block;width:28px;height:28px;border:3px solid #31404d;border-top-color:#16b879;border-radius:50%;animation:spin .8s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
+@media(max-width:850px){.four{grid-template-columns:repeat(2,minmax(0,1fr))}.two{grid-template-columns:1fr}}
+@media(max-width:500px){.wrap{padding:9px}.card{padding:12px}.kpi{min-height:88px}.kpi b{font-size:22px}.top h1{font-size:22px}}
+
+/* ===== Interactive Leave Dashboard ===== */
+.reportHero{background:linear-gradient(135deg,#111b25,#162533);border:1px solid #2d4352}.reportKpi{position:relative;overflow:hidden;min-height:96px}.reportKpi small{display:block;color:#82919f;margin-top:4px}.reportFilters{grid-template-columns:repeat(4,minmax(0,1fr))}.reportGrid3{grid-template-columns:repeat(3,minmax(0,1fr))}.reportBars{height:250px;display:flex;align-items:flex-end;gap:7px;border-bottom:1px solid #34414d;padding:14px 4px 0}.rbarBtn{border:0;background:transparent;padding:0;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;flex:1;min-width:0;height:100%;cursor:pointer;color:inherit}.rbar{width:min(42px,82%);background:#18b97e;border-radius:7px 7px 0 0;min-height:3px;transition:.2s}.rbarBtn:hover .rbar{opacity:.75;transform:scaleY(1.03)}.rbarVal{font-size:10px;color:#b9c5ce;margin-bottom:4px}.rbarLab{font-size:10px;color:#82919f;margin-top:7px}.donutWrap{min-height:250px;display:flex;align-items:center;justify-content:center;gap:22px;flex-wrap:wrap}.donut{width:170px;height:170px;border-radius:50%;position:relative}.donut:after{content:"";position:absolute;inset:34px;background:#111b25;border-radius:50%}.donutCenter{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:2;font-weight:700;font-size:22px}.legend{display:grid;gap:9px}.legendRow{display:flex;align-items:center;gap:8px}.dot{width:11px;height:11px;border-radius:50%;display:inline-block;background:#18b97e}.dot.casual{background:#5b7082}.insight{padding:10px 12px;border:1px solid #293846;border-radius:10px;margin:8px 0;background:#0c141d}.insight b{display:block;margin-bottom:4px}.statusCard{display:flex;gap:10px;align-items:center;padding:11px;border:1px solid #293846;border-radius:12px;margin:8px 0;background:#0c141d}.statusIcon{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800}.statusGood .statusIcon{background:#103d2d;color:#8de2bc}.statusWarn .statusIcon{background:#473516;color:#ffd889}.statusBad .statusIcon{background:#481e1e;color:#ff9b9b}.statusInfo{flex:1}.statusInfo b{display:block;margin-bottom:3px}.statusMeta{font-size:12px;color:#95a4b2}.usageMeter{height:12px;background:#1d2934;border-radius:10px;overflow:hidden;margin-top:8px}.usageMeter i{display:block;height:100%;border-radius:10px;background:#18b97e}.usageMeter.warn i{background:#d7a33a}.usageMeter.bad i{background:#c74b4b}.usagePct{font-size:12px;font-weight:700}.reportTableWrap{overflow:auto}.clickableRow{cursor:pointer}.clickableRow:hover td{background:#17232d}.clickHint{font-size:11px;color:#82919f;margin-top:8px}@media(max-width:850px){.reportFilters{grid-template-columns:repeat(2,minmax(0,1fr))}.reportGrid3{grid-template-columns:1fr}}@media(max-width:500px){.reportFilters{grid-template-columns:1fr}.reportBars{height:220px}.donut{width:145px;height:145px}.donut:after{inset:29px}}
+
+
+.authScreen{position:fixed;inset:0;background:radial-gradient(circle at top,#132b42 0,#08111a 55%,#050a10 100%);display:flex;align-items:center;justify-content:center;padding:18px;z-index:999}.authBox{width:min(430px,100%);background:#101b26;border:1px solid #29485f;border-radius:22px;padding:28px;box-shadow:0 20px 60px rgba(0,0,0,.45);text-align:center}.authLogo{width:70px;height:70px;margin:0 auto 14px;border-radius:20px;background:#0d7ef3;display:flex;align-items:center;justify-content:center;font-size:34px}.authBox h2{margin:8px 0}.authBox p{color:#95a4b2;margin:8px 0 18px}.authBox input{text-align:center;font-size:22px;letter-spacing:5px}.authBox button{width:100%;margin-top:12px;background:#0d83f5}.authErr{min-height:22px;color:#ff8e8e;margin-top:10px;font-size:13px}.reportNav{display:flex;gap:8px;overflow:auto;margin:0 0 12px}.reportNav button{white-space:nowrap;background:#172838;border:1px solid #29485f}.reportNav button.active{background:#0d83f5;border-color:#0d83f5}.dashPanel{min-width:0}.miniKpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}.miniKpi{padding:13px;border:1px solid #293846;border-radius:12px;background:#0c141d}.miniKpi b{display:block;font-size:23px;margin-top:5px}.miniKpi small{color:#95a4b2}.percentBar{height:13px;background:#182633;border-radius:10px;overflow:hidden}.percentBar i{display:block;height:100%;border-radius:10px;background:#18b97e}.percentBar.warn i{background:#e0ad2f}.percentBar.bad i{background:#ef4d5d}.stateGood{color:#18d98b}.stateWarn{color:#ffd04a}.stateBad{color:#ff5c6d}.analyticsGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.analyticsBox{background:#0c141d;border:1px solid #293846;border-radius:12px;padding:14px}.analyticsBox b{font-size:25px;display:block;margin-top:5px}.notice{padding:12px;border-radius:12px;border:1px solid #293846;background:#0c141d;margin:8px 0}.notice.good{border-color:#187b57}.notice.warn{border-color:#8b6a20}.notice.bad{border-color:#9b3d4a}.searchResultEmpty{padding:18px;text-align:center;color:#95a4b2}
+@media(max-width:850px){.miniKpis{grid-template-columns:repeat(2,minmax(0,1fr))}.analyticsGrid{grid-template-columns:1fr}}
+@media(max-width:500px){.authBox{padding:22px}.miniKpis{grid-template-columns:1fr 1fr}}
+
+/* ===== Dashboard enhancements ===== */
+.trend{font-size:11px;font-weight:700}
+.trend.up{color:#ff9b9b}.trend.down{color:#8de2bc}.trend.flat{color:#95a4b2}
+.spark{margin-top:6px;line-height:0}
+.stack{display:flex;flex-direction:column;justify-content:flex-end;width:min(38px,85%);border-radius:6px 6px 0 0;overflow:visible;position:relative}
+.stackSeg.reg{background:#18b97e}
+.stackSeg.cas{background:#5b7082}
+.stackSeg:first-child{border-radius:6px 6px 0 0}
+.prevMark{position:absolute;right:-3px;left:-3px;height:2px;background:repeating-linear-gradient(90deg,#ffd889 0 4px,transparent 4px 8px);z-index:2}
+.chartLegend{display:flex;gap:14px;justify-content:center;margin-top:8px;font-size:11px;color:#95a4b2;flex-wrap:wrap}
+.chartLegend span{display:flex;align-items:center;gap:5px}
+.legendDotSm{width:9px;height:9px;border-radius:3px;display:inline-block}
+.heatWrap{overflow:auto}
+.heatGrid{display:grid;grid-template-columns:38px repeat(12,minmax(24px,1fr));gap:3px;min-width:580px}
+.heatCell{aspect-ratio:1;border-radius:4px;background:#182633}
+.heatLbl{font-size:10px;color:#82919f;display:flex;align-items:center}
+.heatColLbl{font-size:10px;color:#82919f;text-align:center}
+.insightsRow{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:12px}
+@media(max-width:850px){.insightsRow{grid-template-columns:1fr}}
+.limitCard{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:9px;border:1px solid #293846;border-radius:10px;margin:6px 0;background:#0c141d;flex-wrap:wrap}
+.chip{display:inline-flex;align-items:center;gap:6px;background:#172838;border:1px solid #29485f;border-radius:20px;padding:5px 10px;font-size:12px}
+.chip button{background:transparent;border:0;color:#ff9b9b;padding:0;font-weight:700;cursor:pointer;font-size:13px}
+.linkBtn{white-space:nowrap}
+.kpiHead{display:flex;align-items:center;gap:6px}
+
+
+.authSwitch{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:12px}
+.authTab{background:#172838;border:1px solid #29485f;color:#dbe7ef;margin:0}
+.authTab.active{background:#0d83f5;border-color:#0d83f5}
+.loginMode{display:grid;gap:9px}
+.loginMode>input{text-align:center;font-size:21px;letter-spacing:3px}
+.employeeBox{width:min(720px,100%);text-align:right}
+.employeeIdentity{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:10px 0}
+.employeeIdentity>div{padding:12px;border:1px solid #293846;border-radius:12px;background:#0c141d}
+.employeeIdentity span,.employeeIdentity b{display:block}
+.employeeIdentity b{font-size:18px;margin-top:5px}
+.selfTable{overflow:auto;border:1px solid #293846;border-radius:11px}
+.selfTable table{min-width:620px}
+@media(max-width:500px){.authSwitch{grid-template-columns:1fr}.employeeIdentity{grid-template-columns:1fr}}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+</head>
+<body>
+<div id="authScreen" class="authScreen">
+  <div class="authBox">
+    <div class="authLogo">🔐</div>
+    <h2>دخول نظام إدارة الإجازات</h2>
+    <p>اختر طريقة الدخول</p>
+
+    <div class="authSwitch">
+      <button id="employeeLoginTab" class="authTab active" onclick="showLoginMode('employee')">👤 دخول موظف بالكود</button>
+      <button id="adminLoginTab" class="authTab" onclick="showLoginMode('admin')">🔑 دخول الإدارة</button>
+    </div>
+
+    <div id="employeeLoginBox" class="loginMode">
+      <input id="employeeCode" type="text" inputmode="text" autocomplete="off"
+             placeholder="أدخل كود الموظف"
+             onkeydown="if(event.key==='Enter')loginEmployeeCode()">
+      <button id="employeeLoginBtn" onclick="loginEmployeeCode()">دخول الموظف</button>
+      <div class="muted" style="font-size:12px;margin-top:9px">سيتم عرض بيانات الموظف صاحب هذا الكود فقط.</div>
+    </div>
+
+    <div id="adminLoginBox" class="loginMode hidden">
+      <div class="authFields" style="display:grid;gap:9px">
+        <input id="loginEmail" type="email" autocomplete="username" placeholder="البريد الإلكتروني" onkeydown="if(event.key==='Enter')document.getElementById('loginPassword').focus()">
+        <input id="loginPassword" type="password" autocomplete="current-password" placeholder="كلمة المرور" onkeydown="if(event.key==='Enter')login()">
+      </div>
+      <button id="loginBtn" onclick="login()">دخول الإدارة</button>
+    </div>
+    <div id="authErr" class="authErr"></div>
+  </div>
+</div>
+
+<div id="employeeScreen" class="authScreen hidden">
+  <div class="authBox employeeBox">
+    <div class="authLogo">👤</div>
+    <div class="top" style="margin-bottom:8px">
+      <div style="text-align:right">
+        <h2 style="margin:0">بيانات الموظف</h2>
+        <span class="pill">👁️ عرض شخصي</span>
+      </div>
+      <button class="secondary small" onclick="employeeSignOut()">خروج</button>
+    </div>
+
+    <div id="employeeLoading" class="card loading" style="min-height:120px">
+      <div><div class="spinner"></div><p>جاري تحميل بياناتك...</p></div>
+    </div>
+
+    <div id="employeeContent" class="hidden">
+      <div class="employeeIdentity">
+        <div><span class="muted">الاسم</span><b id="selfName">—</b></div>
+        <div><span class="muted">الكود</span><b id="selfCode">—</b></div>
+      </div>
+
+      <div class="miniKpis" style="margin-top:10px">
+        <div class="miniKpi"><small>📘 اعتيادي</small><b id="selfRegular">0</b><small>يوم</small></div>
+        <div class="miniKpi"><small>📙 عارضة</small><b id="selfCasual">0</b><small>يوم</small></div>
+        <div class="miniKpi"><small>📦 الإجمالي</small><b id="selfTotal">0</b><small>يوم</small></div>
+        <div class="miniKpi"><small>✅ المتبقي</small><b id="selfRemaining">0</b><small>يوم</small></div>
+      </div>
+
+      <div class="card" style="margin-top:10px">
+        <h3 style="margin-top:0">📝 سجل إجازاتي</h3>
+        <div id="selfLeaves"></div>
+      </div>
+      <div id="employeeMsg"></div>
+    </div>
+  </div>
+</div>
+<div id="app" class="wrap hidden">
+  <div class="top">
+    <div><h1>لوحة إدارة الإجازات</h1><span id="roleBadge" class="pill">—</span><span id="roleHint" class="muted" style="font-size:11px;margin-right:7px"></span></div>
+    <div class="actions"><button class="secondary" onclick="safeLoad()">↻ تحديث</button><button class="secondary" onclick="signOut()">خروج</button></div>
+  </div>
+  <div id="globalMsg" class="msg hidden"></div>
+  <div id="loading" class="card loading"><div><div class="spinner"></div><p>جاري تحميل النظام...</p></div></div>
+  <div id="mainUI" class="hidden">
+    <div class="tabs">
+      <button id="tDash" class="active" onclick="tab('dash')">📊 الرئيسية</button>
+      <button id="tEmp" onclick="tab('emp')">👥 الموظفون</button>
+      <button id="tLeave" onclick="tab('leave')">📝 الإجازات</button>
+      <button id="tReport" onclick="tab('report')">📈 التقارير</button>
+      <button id="tSet" onclick="tab('set')">⚙️ الإعدادات</button>
+    </div>
+
+    <section id="dash">
+      <div class="card"><div class="top"><h2>لوحة المؤشرات</h2><button class="secondary small" onclick="safeLoad()">↻ تحديث</button></div><div class="grid two"><select id="year" onchange="onYearChange()"></select><input id="search" placeholder="بحث باسم الموظف أو الكود" oninput="onSearchChange()"></div><div class="top" style="margin-top:9px;flex-wrap:wrap"><div id="dashChip"></div><button class="secondary small linkBtn" onclick="copyDashLink()">🔗 نسخ رابط بالفلاتر</button></div></div>
+      <div class="grid four">
+        <div class="card kpi"><span>الموظفون</span><b id="kE">0</b></div>
+        <div class="card kpi"><span>الرصيد السنوي</span><b id="kB">0</b></div>
+        <div class="card kpi" style="cursor:pointer" onclick="focusUsage()" title="اضغط لعرض الأعلى استخدامًا"><div class="kpiHead"><span>المستخدم</span><span id="kUTrend" class="trend"></span></div><b id="kU">0</b><div id="kUSpark" class="spark"></div></div>
+        <div class="card kpi" style="cursor:pointer" onclick="focusLowBalance()" title="اضغط لعرض أصحاب الرصيد المنخفض"><span>المتبقي</span><b id="kR">0</b></div>
+      </div>
+      <div id="alerts"></div>
+      <div class="insightsRow">
+        <div class="card"><span class="muted">📊 مقارنة بالعام السابق</span><b id="kYoy" style="display:block;font-size:18px;margin-top:6px">—</b></div>
+        <div class="card"><span class="muted">⏱️ متوسط مدة الإجازة</span><b id="kAvgDur" style="display:block;font-size:18px;margin-top:6px">—</b></div>
+        <div class="card"><span class="muted">🚫 لم يستخدموا رصيدهم إطلاقًا</span><b id="kZeroUse" style="display:block;font-size:18px;margin-top:6px">—</b></div>
+      </div>
+      <div id="seasonInsight"></div>
+      <div id="limitAlerts"></div>
+      <div class="grid two"><div class="card"><h2>استخدام الإجازات شهريًا</h2><div id="chart"></div><div class="chartLegend"><span><i class="legendDotSm" style="background:#18b97e"></i>اعتيادي</span><span><i class="legendDotSm" style="background:#5b7082"></i>عارضة</span><span><i class="legendDotSm" style="background:#ffd889;border-radius:50%"></i>خط العام السابق</span></div></div><div class="card"><h2>أعلى الموظفين استخدامًا</h2><div id="ranking"></div></div></div>
+      <div class="card"><h2>🗓️ خريطة كثافة الإجازات (يوم الأسبوع × الشهر)</h2><div class="heatWrap"><div id="heatmap"></div></div></div>
+      <div class="card"><h2>ملخص الموظفين</h2><div id="dashTable"></div></div>
+    </section>
+
+    <section id="emp" class="hidden"><div class="grid two"><div class="card admin-only"><h2>➕ إضافة موظف</h2><div class="grid"><input id="nc" placeholder="كود الموظف"><input id="nn" placeholder="اسم الموظف"><div class="grid two"><input id="nr" type="number" step=".5" placeholder="رصيد اعتيادي"><input id="na" type="number" step=".5" placeholder="رصيد عارضة"></div><button onclick="addEmp()">حفظ الموظف</button><div id="emsg"></div></div></div><div class="card"><h2>🔎 بحث</h2><input id="es" placeholder="بحث بالكود أو الاسم" oninput="renderEmp()"><p class="muted">من هنا تقدر تعدل أو تحذف أي موظف.</p></div></div><div class="card"><h2>بيانات الموظفين</h2><div id="empTable"></div></div></section>
+
+    <section id="leave" class="hidden"><div class="grid two"><div class="card admin-only"><h2>📝 تسجيل إجازة</h2><div class="grid"><select id="le"></select><select id="lt"><option>اعتيادي</option><option>عارضة</option></select><input id="ld" type="date"><input id="ldays" type="number" step=".5" min=".5" placeholder="عدد الأيام"><input id="ln" placeholder="ملاحظات (اختياري)"><button onclick="addLeave()">تسجيل الإجازة</button><div id="lmsg"></div></div></div><div class="card"><h2>🔎 تصفية</h2><input id="ls" placeholder="اسم أو كود" oninput="renderLeaves()"><div class="grid two"><select id="lf" onchange="renderLeaves()"><option value="">كل الأنواع</option><option>اعتيادي</option><option>عارضة</option></select><input id="lm" type="month" onchange="renderLeaves()"></div></div></div><div class="card"><h2>سجل الإجازات</h2><div id="leaveTable"></div></div></section>
+
+    <section id="report" class="hidden">
+      <div class="reportNav">
+        <button id="rd1" class="active" onclick="switchReportDash(1)">📊 لوحة الملخص</button>
+        <button id="rd2" onclick="switchReportDash(2)">📈 لوحة استهلاك الرصيد</button>
+        <button id="rd3" onclick="switchReportDash(3)">🗓️ لوحة تحليل الإجازات</button>
+      </div>
+      <div id="reportDash1" class="dashPanel">
+
+  <div class="card reportHero">
+    <div class="top"><div><h2>📊 لوحة التقارير والتحليل</h2><p class="muted">Dashboard ديناميكي من بيانات الموظفين والإجازات</p></div><button class="secondary small" onclick="csvReport()">⬇️ تصدير التقرير</button></div>
+    <div class="grid reportFilters" style="margin-top:12px">
+      <select id="reportYear" onchange="changeReportYear(this.value)"></select>
+      <select id="reportEmp" onchange="renderReport()"><option value="">كل الموظفين</option></select>
+      <select id="reportType" onchange="renderReport()"><option value="">كل أنواع الإجازات</option><option value="اعتيادي">اعتيادي</option><option value="عارضة">عارضة</option></select>
+      <select id="reportMonth" onchange="renderReport()"><option value="">كل الشهور</option><option value="01">يناير</option><option value="02">فبراير</option><option value="03">مارس</option><option value="04">أبريل</option><option value="05">مايو</option><option value="06">يونيو</option><option value="07">يوليو</option><option value="08">أغسطس</option><option value="09">سبتمبر</option><option value="10">أكتوبر</option><option value="11">نوفمبر</option><option value="12">ديسمبر</option></select>
+    </div>
+    <div class="top" style="margin-top:10px;gap:8px"><input id="reportSearch" placeholder="🔎 بحث بالاسم أو كود الموظف" oninput="renderReport()" style="flex:1"><button class="secondary small" onclick="resetReportFilters()">↺ مسح الفلاتر</button></div>
+  </div>
+  <div class="grid four"><div class="card kpi reportKpi"><span>👥 الموظفون</span><b id="rkE">0</b><small>ضمن التقرير</small></div><div class="card kpi reportKpi"><span>📦 إجمالي الرصيد</span><b id="rkB">0</b><small>يوم</small></div><div class="card kpi reportKpi"><span>📝 المستخدم</span><b id="rkU">0</b><small>يوم إجازة</small></div><div class="card kpi reportKpi"><span>✅ المتبقي</span><b id="rkR">0</b><small>يوم</small></div></div>
+  <div class="card"><div class="top"><div><h2>🚦 مؤشر استهلاك الرصيد</h2><p class="muted">المعدل المتوقع = الرصيد السنوي ÷ 12 × عدد الشهور المنقضية</p></div><span class="pill" id="reportPeriod">كل السنة</span></div><div id="reportStatus"></div></div>
+  <div class="grid two"><div class="card"><div class="top"><h2>📅 استخدام الإجازات شهريًا</h2><span class="muted">اضغط على الشهر للفلترة</span></div><div id="reportMonthChart"></div></div><div class="card"><h2>🥧 توزيع أنواع الإجازات</h2><div id="reportDonut" class="donutWrap"></div></div></div>
+  <div class="grid two"><div class="card"><h2>🏆 الأكثر استخدامًا</h2><div id="reportRanking"></div></div><div class="card"><h2>💡 مؤشرات سريعة</h2><div id="reportInsights"></div></div></div>
+  <div class="card"><div class="top"><h2>📋 تحليل الموظفين</h2><span class="muted" id="reportCount">0 سجل</span></div><div id="reportTable"></div></div>
+
+      </div>
+      <div id="reportDash2" class="dashPanel hidden">
+        <div class="card"><div class="top"><div><h2>📈 استهلاك الرصيد لكل موظف</h2><p class="muted">المستحق حتى الآن = الرصيد السنوي ÷ 12 × الشهور المنقضية</p></div><span class="pill" id="consumptionPeriod">0 شهر</span></div>
+          <div class="miniKpis" id="consumptionKpis"></div>
+        </div>
+        <div class="card"><div class="top"><h2>🎯 مقارنة المستحق بالاستهلاك</h2><input id="consumptionSearch" placeholder="🔎 بحث باسم أو كود" oninput="renderConsumptionDash()" style="max-width:360px"></div><div id="consumptionTable"></div></div>
+      </div>
+      <div id="reportDash3" class="dashPanel hidden">
+        <div class="card"><div class="top"><div><h2>🗓️ لوحة تحليل الإجازات</h2><p class="muted">تحليل شهري وأنواع الإجازات وأكثر الموظفين استخدامًا</p></div><span class="pill" id="leaveAnalyticsTotal">0 يوم</span></div></div>
+        <div class="analyticsGrid" id="leaveAnalyticsKpis"></div>
+        <div class="grid two"><div class="card"><h2>📅 الاستخدام الشهري</h2><div id="analyticsMonthChart"></div></div><div class="card"><h2>🥧 أنواع الإجازات</h2><div id="analyticsTypeChart" class="donutWrap"></div></div></div>
+        <div class="grid two"><div class="card"><h2>🏆 أكثر الموظفين استهلاكًا</h2><div id="analyticsRanking"></div></div><div class="card"><h2>🚨 التنبيهات</h2><div id="analyticsAlerts"></div></div></div>
+      </div>
+    </section>
+    <section id="set" class="hidden">
+<div class="card"><h2>⚙️ الإعدادات</h2><p>السنة الحالية: <b id="sy"></b></p><p class="muted">الدخول عبر Supabase. حساب Admin واحد فقط، وباقي الحسابات وضع مشاهدة فقط.</p></div>
+<div class="card admin-only">
+  <div class="top"><div><h2>📥 استيراد الموظفين من Excel</h2><p class="muted">ارفع ملف Excel وسيتم أخذ الأسماء والأرصدة وإضافتها أو تحديثها تلقائيًا.</p></div><span class="pill">XLSX / XLS / CSV</span></div>
+  <div class="msg" style="margin-top:12px">صيغة الأعمدة المفضلة: <b>الكود</b> | <b>الاسم</b> | <b>اعتيادي</b> | <b>عارضة</b>. الكود اختياري، وإذا لم يوجد سيتم إنشاء كود تلقائي.</div>
+  <div class="grid two" style="margin-top:10px"><input id="excelFile" type="file" accept=".xlsx,.xls,.csv"><select id="excelSheet"><option value="">اختيار الورقة بعد رفع الملف</option></select></div>
+  <div class="actions" style="margin-top:10px"><button onclick="previewExcel()">👁️ معاينة الملف</button><button class="secondary" onclick="importExcel()">⬆️ استيراد إلى النظام</button></div>
+  <div id="excelPreview" style="margin-top:12px"></div>
+  <div id="excelMsg"></div>
+</div>
+</section>
+  </div>
+  <div class="muted" style="text-align:center;padding:15px">نظام إدارة الإجازات</div>
+</div>
+
+<div id="modal" class="modal hidden"><div class="modalbox"><div class="top"><h2 id="modalTitle">تعديل</h2><button class="secondary" onclick="closeM()">✕</button></div><div id="modalBody"></div></div></div>
+
+<script>
+(function(){
+'use strict';
+const SUPABASE_URL='https://imvjxjnyclyzxemtitbt.supabase.co';
+const SUPABASE_KEY='sb_publishable_JVuF-CEoQTzrfVlUAdLoyg_mSSfX4aT';
+  const ADMIN_UUID='494816d2-e85c-425d-b71b-a108ad787413';
+const $=id=>document.getElementById(id); window.$=$;
+const S={e:[],a:[],l:[],pl:[],year:new Date().getFullYear(),ready:false,session:null,role:'watch',dashFilter:null,dashSort:null};
+const f=n=>Number(n||0).toFixed(1).replace('.0','');
+const esc=x=>String(x??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
+let db=null;
+  let employeeSelf=null;
+  let loginMode='employee';
+  let excelWorkbook=null;
+function showMsg(text,ok){const g=$('globalMsg');g.textContent=text;g.className='msg '+(ok?'success':'error');g.classList.remove('hidden')}
+function clearMsg(){const g=$('globalMsg');g.classList.add('hidden');g.textContent=''}
+function localError(e){showMsg('حدث خطأ في تشغيل التطبيق: '+(e&&e.message?e.message:String(e)),false)}
+window.addEventListener('error',e=>localError(e.error||e.message));
+window.addEventListener('unhandledrejection',e=>localError(e.reason));
+function isAdmin(){const u=S.session?.user||{};const meta=u.app_metadata||{};const umeta=u.user_metadata||{};return String(u.id||'')===ADMIN_UUID||String(meta.role||'').toLowerCase()==='admin'||String(umeta.role||'').toLowerCase()==='admin'}
+  function applyRoleUI(){const admin=isAdmin();S.role=admin?'admin':'watch';const rb=$('roleBadge');if(rb){rb.textContent=admin?'🔴 Admin':'👁️ Watch'}document.querySelectorAll('.admin-only').forEach(el=>el.classList.toggle('hidden',!admin));const hint=$('roleHint');if(hint)hint.textContent=admin?'صلاحيات كاملة':'وضع مشاهدة فقط — لا يمكن إضافة أو تعديل أو حذف البيانات'}
+  function friendlyAuthError(e){const x=String(e?.message||e||'حدث خطأ غير معروف'),l=x.toLowerCase();if(l.includes('invalid login credentials'))return'البريد الإلكتروني أو كلمة المرور غير صحيحة.';if(l.includes('email not confirmed'))return'يجب تأكيد البريد الإلكتروني أولًا من رسالة Supabase.';if(l.includes('failed to fetch')||l.includes('network'))return'تعذر الاتصال بـ Supabase. تأكد من الإنترنت.';return x}
+  async function signUp(){const email=($('loginEmail')?.value||'').trim(),password=$('loginPassword').value;const err=$('authErr');if(!email||!password){if(err)err.textContent='اكتب البريد الإلكتروني وكلمة المرور';return}try{const {data,error}=await db.auth.signUp({email,password});if(error)throw error;if(err)err.textContent=data?.session?'تم إنشاء الحساب وتسجيل الدخول.':'تم إنشاء الحساب. إذا كان تأكيد البريد مفعّلًا، افتح رسالة البريد ثم سجّل الدخول.';if(data?.session)await boot(data.session)}catch(e){if(err)err.textContent=friendlyAuthError(e)}}
+  async function login(){const email=($('loginEmail')?.value||'').trim(),password=($('loginPassword')?.value||'');const err=$('authErr');if(err)err.textContent='';if(!email)return err&&(err.textContent='اكتب البريد الإلكتروني');if(!password)return err&&(err.textContent='اكتب كلمة المرور');const btn=$('loginBtn');if(btn){btn.disabled=true;btn.textContent='جارٍ الدخول...'}try{if(!db){if(!window.supabase)throw new Error('مكتبة Supabase لم تُحمّل');db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY)}const {data,error}=await db.auth.signInWithPassword({email,password});if(error)throw error;if(!data?.session)throw new Error('تم التحقق من الحساب لكن لم يتم إنشاء جلسة.');S.session=data.session;applyRoleUI();await boot(data.session)}catch(e){console.error('ADMIN LOGIN:',e);if(err)err.textContent=friendlyAuthError(e)}finally{if(btn){btn.disabled=false;btn.textContent='دخول الإدارة'}}}
+  async function signOut(){
+    if(db)await db.auth.signOut();
+    S.session=null;S.role='watch';employeeSelf=null;
+    $('employeeScreen').classList.add('hidden');
+    $('employeeContent').classList.add('hidden');
+    $('employeeLoading').classList.remove('hidden');
+    $('employeeCode').value='';
+    $('authErr').textContent='';
+    $('app').classList.add('hidden');
+    $('authScreen').classList.remove('hidden');
+  }
+  function employeeSignOut(){
+    employeeSelf=null;
+    $('employeeScreen').classList.add('hidden');
+    $('employeeContent').classList.add('hidden');
+    $('employeeLoading').classList.remove('hidden');
+    $('employeeCode').value='';
+    $('authErr').textContent='';
+    $('authScreen').classList.remove('hidden');
+    showLoginMode('employee');
+  }
+  function showLoginMode(mode){
+    loginMode=mode;
+    const emp=mode==='employee';
+    $('employeeLoginBox').classList.toggle('hidden',!emp);
+    $('adminLoginBox').classList.toggle('hidden',emp);
+    $('employeeLoginTab').classList.toggle('active',emp);
+    $('adminLoginTab').classList.toggle('active',!emp);
+    $('authErr').textContent='';
+    if(emp)setTimeout(()=>$('employeeCode')?.focus(),0);
+  }
+  async function loginEmployeeCode(){
+    const code=String($('employeeCode')?.value||'').trim();
+    const err=$('authErr');
+    const btn=$('employeeLoginBtn');
+    if(err)err.textContent='';
+    if(!code){if(err)err.textContent='اكتب كود الموظف';return}
+    if(!db){
+      if(!window.supabase){if(err)err.textContent='مكتبة Supabase لم تُحمّل';return}
+      db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+    }
+    if(btn){btn.disabled=true;btn.textContent='جارٍ التحقق...'}
+    try{
+      const year=+$('year')?.value||new Date().getFullYear();
+      const {data,error}=await db.rpc('employee_self_summary',{p_code:code,p_year:year});
+      if(error)throw error;
+      if(!data?.found){
+        throw new Error('كود الموظف غير موجود أو الموظف غير نشط.');
+      }
+      employeeSelf=data;
+      renderEmployeeSelf();
+      $('authScreen').classList.add('hidden');
+      $('employeeScreen').classList.remove('hidden');
+    }catch(e){
+      if(err)err.textContent=friendlyError(e);
+    }finally{
+      if(btn){btn.disabled=false;btn.textContent='دخول الموظف'}
+    }
+  }
+
+  function renderEmployeeSelf(){
+    const d=employeeSelf;
+    if(!d?.found)return;
+    const e=d.employee||{};
+    const a=d.entitlement||{};
+    const leaves=Array.isArray(d.leaves)?d.leaves:[];
+    const regular=Number(a.regular_days||0);
+    const casual=Number(a.casual_days||0);
+    const total=regular+casual;
+    const used=leaves.reduce((s,x)=>s+Number(x.days||0),0);
+    const remaining=total-used;
+    $('selfName').textContent=e.name||'—';
+    $('selfCode').textContent=e.code||'—';
+    $('selfRegular').textContent=f(regular);
+    $('selfCasual').textContent=f(casual);
+    $('selfTotal').textContent=f(total);
+    $('selfRemaining').textContent=f(remaining);
+    $('employeeLoading').classList.add('hidden');
+    $('employeeContent').classList.remove('hidden');
+
+    if(!leaves.length){
+      $('selfLeaves').innerHTML='<div class="empty">لا توجد إجازات مسجلة في سنة '+esc(d.year)+'</div>';
+      return;
+    }
+    const rows=leaves.map(l=>'<tr><td>'+esc(l.leave_date||'—')+'</td><td>'+esc(l.leave_type||'—')+'</td><td>'+f(l.days)+'</td><td>'+esc(l.notes||'')+'</td></tr>').join('');
+    $('selfLeaves').innerHTML='<div class="selfTable"><table><thead><tr><th>التاريخ</th><th>النوع</th><th>الأيام</th><th>ملاحظات</th></tr></thead><tbody>'+rows+'</tbody></table></div>';
+  }
+
+  async function boot(session){S.session=session||null;if(!session){$('app').classList.add('hidden');$('employeeScreen').classList.add('hidden');$('authScreen').classList.remove('hidden');showLoginMode('employee');return}$('employeeScreen').classList.add('hidden');$('authScreen').classList.add('hidden');$('app').classList.remove('hidden');applyRoleUI();init();applyUrlFilters();await safeLoad()}
+  function init(){const y=$('year'),c=new Date().getFullYear();y.innerHTML='';$('reportYear').innerHTML='';for(let i=c-3;i<=c+3;i++){y.insertAdjacentHTML('beforeend','<option value="'+i+'">'+i+'</option>');$('reportYear').insertAdjacentHTML('beforeend','<option value="'+i+'">'+i+'</option>')}y.value=S.year;$('reportYear').value=S.year;$('ld').value=new Date().toISOString().slice(0,10)}
+function ent(id){const a=S.a.find(x=>x.employee_id===id);return{r:+(a?.regular_days||0),c:+(a?.casual_days||0)}}
+function sum(e){const q=ent(e.id),ls=S.l.filter(x=>x.employee_id===e.id),u=ls.reduce((s,x)=>s+(+x.days||0),0);return Object.assign({},e,{r:q.r,c:q.c,b:q.r+q.c,u,rem:q.r+q.c-u,ru:ls.filter(x=>x.leave_type==='اعتيادي').reduce((s,x)=>s+(+x.days||0),0),cu:ls.filter(x=>x.leave_type==='عارضة').reduce((s,x)=>s+(+x.days||0),0)})}
+async function load(){
+  if(!db){if(!window.supabase){showMsg('تعذر تحميل مكتبة الاتصال بـ Supabase. افتح الرابط مرة أخرى أو جرّب Chrome/تأكد من الإنترنت.',false);return}db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY)}
+  S.year=+$('year').value||S.year; $('loading').classList.remove('hidden');
+  const results=await Promise.allSettled([
+    db.from('employees').select('*').eq('active',true).order('code'),
+    db.from('annual_entitlements').select('*').eq('year',S.year),
+    db.from('leave_entries').select('*').gte('leave_date',S.year+'-01-01').lte('leave_date',S.year+'-12-31').order('leave_date',{ascending:false}),
+    db.from('leave_entries').select('*').gte('leave_date',(S.year-1)+'-01-01').lte('leave_date',(S.year-1)+'-12-31')
+  ]);
+  const pick=i=>results[i].status==='fulfilled'?results[i].value:null;
+  const e=pick(0),a=pick(1),l=pick(2),pl=pick(3);
+  const errors=[];
+  if(!e||e.error) errors.push('الموظفين: '+friendlyError(e?.error||'فشل الاتصال'));
+  if(!a||a.error) errors.push('الأرصدة: '+friendlyError(a?.error||'فشل الاتصال'));
+  if(!l||l.error) errors.push('الإجازات: '+friendlyError(l?.error||'فشل الاتصال'));
+  S.e=e&&!e.error?(e.data||[]):[]; S.a=a&&!a.error?(a.data||[]):[]; S.l=l&&!l.error?(l.data||[]):[]; S.pl=pl&&!pl.error?(pl.data||[]):[]; S.ready=!!e&&!e.error;
+  $('loading').classList.add('hidden');$('mainUI').classList.remove('hidden');
+  if(errors.length) showMsg('تم فتح النظام، لكن توجد مشكلة في بعض البيانات: '+errors.join(' | '),false); else clearMsg();
+  $('sy').textContent=S.year;if($('reportYear'))$('reportYear').value=S.year;fillSelect();render();renderEmp();renderLeaves();renderReport();
+}
+
+function friendlyError(err){
+  const raw=typeof err==='string'?err:(err?.message||err?.details||err?.hint||'خطأ غير معروف');
+  const x=String(raw); const low=x.toLowerCase();
+  if(low.includes('row-level security')) return 'صلاحيات RLS تمنع العملية. راجع سياسات anon للجداول.';
+  if(low.includes('duplicate key')||low.includes('unique constraint')) return 'القيمة موجودة بالفعل، غالبًا كود الموظف مستخدم.';
+  if(low.includes('foreign key')) return 'البيانات مرتبطة بسجل غير موجود أو تم حذفه.';
+  if(low.includes('not-null')) return 'يوجد حقل مطلوب لم يتم إدخاله.';
+  if(low.includes('network')||low.includes('failed to fetch')) return 'مشكلة اتصال بالإنترنت أو Supabase.';
+  if(low.includes('on conflict')) return 'جدول الأرصدة لا يملك مفتاحًا فريدًا مناسبًا، وسيتم تجربة حفظ بديل.';
+  return x;
+}
+
+async function saveEntitlement(employee_id,year,regular_days,casual_days){
+  const payload={employee_id,year,regular_days:Number(regular_days)||0,casual_days:Number(casual_days)||0};
+  let r=await db.from('annual_entitlements').upsert(payload,{onConflict:'employee_id,year'});
+  if(!r.error)return {ok:true};
+  const first=r.error;
+  // Fallback for schemas where the expected unique constraint is missing.
+  const q=await db.from('annual_entitlements').select('employee_id').eq('employee_id',employee_id).eq('year',year).limit(1);
+  if(q.error)return {ok:false,error:first};
+  if(q.data&&q.data.length){
+    const u=await db.from('annual_entitlements').update({regular_days:payload.regular_days,casual_days:payload.casual_days}).eq('employee_id',employee_id).eq('year',year);
+    return u.error?{ok:false,error:u.error}:{ok:true};
+  }
+  const ins=await db.from('annual_entitlements').insert(payload);
+  return ins.error?{ok:false,error:ins.error}:{ok:true};
+}
+async function safeLoad(){try{await load()}catch(e){$('loading').classList.add('hidden');$('mainUI').classList.remove('hidden');localError(e)}}
+function tab(x){['dash','emp','leave','report','set'].forEach(y=>$(y).classList.toggle('hidden',y!==x));document.querySelectorAll('.tabs button').forEach(b=>b.classList.remove('active'));$('t'+({dash:'Dash',emp:'Emp',leave:'Leave',report:'Report',set:'Set'}[x])).classList.add('active');if(x==='emp')renderEmp();if(x==='leave')renderLeaves();if(x==='report')renderReport();if(x==='dash')render()}
+function fillSelect(){$('le').innerHTML=S.e.map(e=>'<option value="'+esc(e.id)+'">'+esc(e.code)+' — '+esc(e.name)+'</option>').join('')||'<option value="">لا يوجد موظفون</option>'}
+function all(){return S.e.map(sum)}
+function render(){
+  const q=($('search').value||'').toLowerCase(),d=all();
+  let v=d.filter(e=>!q||String(e.name).toLowerCase().includes(q)||String(e.code).toLowerCase().includes(q));
+  if(S.dashFilter==='lowBalance')v=v.filter(e=>e.rem<5);
+  if(S.dashSort==='usage')v=v.slice().sort((a,b)=>b.u-a.u);
+  const B=d.reduce((s,e)=>s+e.b,0),U=d.reduce((s,e)=>s+e.u,0),R=d.reduce((s,e)=>s+e.rem,0);
+  $('kE').textContent=d.length;$('kB').textContent=f(B);$('kU').textContent=f(U);$('kR').textContent=f(R);
+  const low=d.filter(e=>e.rem<5);
+  $('alerts').innerHTML=low.length?'<div class="alert">⚠️ رصيد منخفض: '+low.map(e=>esc(e.name)+' ('+f(e.rem)+')').join('، ')+'</div>':'';
+  renderDashChip();monthTrend();renderYoy();renderExtraInsights(d);
+  monthChart();rank();heatmap();
+  $('dashTable').innerHTML=summaryTable(v);
+}
+function onYearChange(){S.dashFilter=null;S.dashSort=null;syncUrl();safeLoad()}
+function onSearchChange(){syncUrl();render()}
+function focusUsage(){S.dashSort='usage';S.dashFilter=null;render();$('dashTable').scrollIntoView({behavior:'smooth',block:'start'})}
+function focusLowBalance(){S.dashFilter='lowBalance';S.dashSort=null;render();$('dashTable').scrollIntoView({behavior:'smooth',block:'start'})}
+function clearDashFilter(){S.dashFilter=null;S.dashSort=null;render()}
+function renderDashChip(){const el=$('dashChip');if(!el)return;if(S.dashFilter==='lowBalance')el.innerHTML='<span class="chip">عرض: رصيد منخفض فقط <button onclick="clearDashFilter()">✕</button></span>';else if(S.dashSort==='usage')el.innerHTML='<span class="chip">ترتيب: الأعلى استخدامًا <button onclick="clearDashFilter()">✕</button></span>';else el.innerHTML=''}
+function syncUrl(){try{const p=new URLSearchParams();p.set('year',$('year').value||S.year);const s=($('search').value||'').trim();if(s)p.set('q',s);if(S.dashFilter)p.set('f',S.dashFilter);history.replaceState(null,'','?'+p.toString())}catch(e){}}
+function copyDashLink(){syncUrl();if(navigator.clipboard)navigator.clipboard.writeText(location.href).then(()=>showMsg('تم نسخ الرابط بالفلاتر الحالية',true)).catch(()=>showMsg(location.href,true));else showMsg(location.href,true)}
+function applyUrlFilters(){try{const p=new URLSearchParams(location.search);const y=p.get('year');if(y)$('year').value=y;const q=p.get('q');if(q)$('search').value=q;const fl=p.get('f');if(fl==='lowBalance')S.dashFilter='lowBalance'}catch(e){}}
+function monthlyByType(rows){const reg=Array(12).fill(0),cas=Array(12).fill(0);rows.forEach(x=>{const d=new Date(x.leave_date+'T00:00:00');if(isNaN(d))return;const m=d.getMonth();if(x.leave_type==='اعتيادي')reg[m]+=+(x.days||0);else cas[m]+=+(x.days||0)});return{reg,cas}}
+function monthlyTotal(rows){const v=Array(12).fill(0);rows.forEach(x=>{const d=new Date(x.leave_date+'T00:00:00');if(!isNaN(d))v[d.getMonth()]+=+(x.days||0)});return v}
+function sparklineSvg(vals){if(!vals.length)return'';const w=100,h=28,pad=2,max=Math.max(...vals,1);const step=vals.length>1?(w-2*pad)/(vals.length-1):0;const pts=vals.map((v,i)=>{const x=pad+i*step,y=h-pad-(v/max)*(h-2*pad);return x+','+y}).join(' ');return '<svg viewBox="0 0 '+w+' '+h+'" width="100%" height="28" preserveAspectRatio="none"><polyline points="'+pts+'" fill="none" stroke="#18b97e" stroke-width="2"/></svg>'}
+function monthTrend(){
+  const now=new Date(),curYear=now.getFullYear(),thisMonthIdx=now.getMonth();
+  const el=$('kUTrend');if(!el)return;
+  if(+S.year!==curYear){el.textContent='';$('kUSpark').innerHTML='';return}
+  const thisUsed=S.l.filter(x=>{const d=new Date(x.leave_date+'T00:00:00');return !isNaN(d)&&d.getMonth()===thisMonthIdx}).reduce((s,x)=>s+(+x.days||0),0);
+  let lastUsed=0;
+  if(thisMonthIdx===0)lastUsed=(S.pl||[]).filter(x=>{const d=new Date(x.leave_date+'T00:00:00');return !isNaN(d)&&d.getMonth()===11}).reduce((s,x)=>s+(+x.days||0),0);
+  else lastUsed=S.l.filter(x=>{const d=new Date(x.leave_date+'T00:00:00');return !isNaN(d)&&d.getMonth()===thisMonthIdx-1}).reduce((s,x)=>s+(+x.days||0),0);
+  if(thisUsed>lastUsed)el.innerHTML='<span class="trend up">▲ '+f(thisUsed-lastUsed)+'</span>';
+  else if(thisUsed<lastUsed)el.innerHTML='<span class="trend down">▼ '+f(lastUsed-thisUsed)+'</span>';
+  else el.innerHTML='<span class="trend flat">— بدون تغيير</span>';
+  const vals=monthlyTotal(S.l).slice(0,thisMonthIdx+1).slice(-6);
+  $('kUSpark').innerHTML=sparklineSvg(vals);
+}
+function renderYoy(){
+  const el=$('kYoy');if(!el)return;
+  if(!S.pl||!S.pl.length){el.textContent='لا توجد بيانات لسنة '+(S.year-1)+' للمقارنة';return}
+  const months=elapsedMonths();
+  const cur=S.l.filter(x=>{const m=parseInt(String(x.leave_date||'').slice(5,7),10);return m>=1&&m<=months}).reduce((s,x)=>s+(+x.days||0),0);
+  const prev=S.pl.filter(x=>{const m=parseInt(String(x.leave_date||'').slice(5,7),10);return m>=1&&m<=months}).reduce((s,x)=>s+(+x.days||0),0);
+  if(prev===0){el.innerHTML=cur>0?'<span class="trend up">لا يوجد استخدام مقابل في '+(S.year-1)+'</span>':'—';return}
+  const pct=(cur-prev)/prev*100,cls=pct>0?'up':pct<0?'down':'flat';
+  el.innerHTML='<span class="trend '+cls+'">'+(pct>0?'▲':pct<0?'▼':'—')+' '+Math.abs(Math.round(pct))+'%</span> <span class="muted" style="font-size:11px">مقابل نفس الفترة من '+(S.year-1)+'</span>';
+}
+function renderExtraInsights(d){
+  const rows=S.l;
+  const avg=rows.length?rows.reduce((s,x)=>s+(+x.days||0),0)/rows.length:0;
+  $('kAvgDur').textContent=rows.length?f(avg)+' يوم/سجل':'—';
+  const zero=d.filter(e=>e.u===0).length,pct=d.length?Math.round(zero/d.length*100):0;
+  $('kZeroUse').textContent=d.length?zero+' موظف ('+pct+'%)':'—';
+  const vals=monthlyTotal(rows),names=['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
+  const max=Math.max(...vals);
+  $('seasonInsight').innerHTML=max>0?'<div class="insight">💡 <b>موسمية الإجازات</b>أكثر شهر استخدامًا هو <b>'+names[vals.indexOf(max)]+'</b> بإجمالي '+f(max)+' يوم.</div>':'';
+  const months=elapsedMonths();
+  const nearing=d.map(e=>{const rate=months>0?e.u/months:0,monthsLeft=rate>0?e.rem/rate:Infinity;return{e,rate,monthsLeft}}).filter(x=>x.e.rem>0&&x.rate>0&&x.monthsLeft<=2).sort((a,b)=>a.monthsLeft-b.monthsLeft);
+  $('limitAlerts').innerHTML=nearing.length?'<div class="card"><h2>⏳ قرب نفاذ الرصيد</h2>'+nearing.slice(0,8).map(x=>'<div class="limitCard"><span>'+esc(x.e.name)+'</span><span class="muted">متبقي '+f(x.e.rem)+' يوم · متوقع نفاذه خلال '+(x.monthsLeft<1?'أقل من شهر':'~'+Math.round(x.monthsLeft)+' شهر')+'</span></div>').join('')+'</div>':'';
+}
+function heatmap(){
+  const days=['أحد','اثنين','ثلاثاء','أربعاء','خميس','جمعة','سبت'];
+  const months=['ينا','فبر','مار','أبر','ماي','يون','يول','أغس','سبت','أكت','نوف','ديس'];
+  const grid=Array.from({length:7},()=>Array(12).fill(0));
+  S.l.forEach(x=>{const d=new Date(x.leave_date+'T00:00:00');if(isNaN(d))return;grid[d.getDay()][d.getMonth()]+=+(x.days||0)});
+  const max=Math.max(...grid.flat(),1);
+  let html='<div class="heatGrid"><div></div>'+months.map(m=>'<div class="heatColLbl">'+m+'</div>').join('');
+  days.forEach((day,ri)=>{
+    html+='<div class="heatLbl">'+day+'</div>';
+    for(let ci=0;ci<12;ci++){const v=grid[ri][ci],op=v/max;html+='<div class="heatCell" title="'+day+' - '+months[ci]+': '+f(v)+' يوم" style="background:'+(v>0?'rgba(24,185,126,'+Math.max(.15,op).toFixed(2)+')':'#182633')+'"></div>'}
+  });
+  html+='</div>';
+  $('heatmap').innerHTML=html;
+}
+function summaryTable(d){if(!d.length)return '<div class="empty">لا توجد بيانات</div>';return '<div class="table"><table><thead><tr><th>الكود</th><th>الاسم</th><th>اعتيادي</th><th>عارضة</th><th>الرصيد</th><th>المستخدم</th><th>المتبقي</th><th>الحالة</th></tr></thead><tbody>'+d.map(e=>'<tr><td>'+esc(e.code)+'</td><td>'+esc(e.name)+'</td><td>'+f(e.r)+'</td><td>'+f(e.c)+'</td><td>'+f(e.b)+'</td><td>'+f(e.u)+'</td><td>'+f(e.rem)+'</td><td>'+(e.rem<0?'<span class="badge bad">تجاوز</span>':e.rem<5?'<span class="badge warn">منخفض</span>':'<span class="badge ok">جيد</span>')+'</td></tr>').join('')+'</tbody></table></div>'}
+function monthChart(){
+  const n=['ينا','فبر','مار','أبر','ماي','يون','يول','أغس','سبت','أكت','نوف','ديس'];
+  const {reg,cas}=monthlyByType(S.l);
+  const prev=monthlyTotal(S.pl||[]);
+  const totals=reg.map((r,i)=>r+cas[i]);
+  const max=Math.max(...totals,...prev,1);
+  $('chart').innerHTML='<div class="bars">'+totals.map((t,i)=>{
+    const casH=Math.max(0,cas[i]/max*190),regH=Math.max(0,reg[i]/max*190),prevH=Math.min(190,prev[i]/max*190);
+    return '<div class="barx"><div class="stack" style="height:'+Math.max(2,casH+regH)+'px">'
+      +(casH>0?'<div class="stackSeg cas" style="height:'+casH+'px"></div>':'')
+      +(regH>0?'<div class="stackSeg reg" style="height:'+regH+'px"></div>':'')
+      +(prev[i]>0?'<div class="prevMark" style="bottom:'+prevH+'px"></div>':'')
+      +'</div></div>';
+  }).join('')+'</div><div class="labels">'+n.map(x=>'<span>'+x+'</span>').join('')+'</div>'}
+function rank(){const d=all().sort((a,b)=>b.u-a.u).slice(0,7),m=Math.max(d[0]?.u||1,1);$('ranking').innerHTML=d.length?d.map((e,i)=>'<div class="rank"><b class="n">'+(i+1)+'</b><div class="who">'+esc(e.name)+'<div class="prog"><i style="width:'+e.u/m*100+'%"></i></div></div><b>'+f(e.u)+'</b></div>').join(''):'<div class="empty">لا توجد إجازات</div>'}
+function msg(id,t,ok){const x=$(id);if(x)x.innerHTML='<div class="msg '+(ok?'success':'error')+'">'+esc(t)+'</div>'}
+async function addEmp(){if(!isAdmin())return msg('emsg','هذه العملية متاحة للـAdmin فقط.');try{const code=$('nc').value.trim(),name=$('nn').value.trim(),r=+$('nr').value||0,c=+$('na').value||0;if(!code||!name)return msg('emsg','أكمل الكود والاسم');if(r<0||c<0)return msg('emsg','الأرصدة لا يمكن أن تكون سالبة');
+  const exists=await db.from('employees').select('id,name').eq('code',code).limit(1);
+  if(exists.error)return msg('emsg',friendlyError(exists.error));
+  if(exists.data&&exists.data.length)return msg('emsg','كود الموظف موجود بالفعل. استخدم تعديل الموظف بدل الإضافة.');
+  const z=await db.from('employees').insert({code,name,active:true}).select().single();
+  if(z.error)return msg('emsg',friendlyError(z.error));
+  const a=await saveEntitlement(z.data.id,S.year,r,c);
+  if(!a.ok){msg('emsg','تم حفظ الموظف، لكن لم يتم حفظ الرصيد: '+friendlyError(a.error),false);await load();return}
+  msg('emsg','تم حفظ الموظف والرصيد بنجاح',true);['nc','nn','nr','na'].forEach(x=>$(x).value='');await load();
+}catch(e){msg('emsg',friendlyError(e),false)}}
+function renderEmp(){const q=($('es').value||'').toLowerCase(),d=all().filter(e=>!q||String(e.name).toLowerCase().includes(q)||String(e.code).toLowerCase().includes(q));const admin=isAdmin();$('empTable').innerHTML=d.length?'<div class="table"><table><thead><tr><th>الكود</th><th>الاسم</th><th>اعتيادي</th><th>عارضة</th><th>المتبقي</th>'+(admin?'<th>إجراءات</th>':'')+'</tr></thead><tbody>'+d.map(e=>'<tr><td>'+esc(e.code)+'</td><td>'+esc(e.name)+'</td><td>'+f(e.r)+'</td><td>'+f(e.c)+'</td><td>'+f(e.rem)+'</td>'+(admin?'<td><div class="actions"><button class="secondary small" onclick="editEmp(\''+esc(e.id)+'\')">تعديل</button><button class="danger small" onclick="delEmp(\''+esc(e.id)+'\')">حذف</button></div></td>':'')+'</tr>').join('')+'</tbody></table></div>':'<div class="empty">لا توجد بيانات</div>'}
+function editEmp(id){if(!isAdmin())return;const e=sum(S.e.find(x=>x.id===id));$('modalTitle').textContent='تعديل الموظف';$('modalBody').innerHTML='<div class="grid"><input id="mc" value="'+esc(e.code)+'"><input id="mn" value="'+esc(e.name)+'"><div class="grid two"><input id="mr" type="number" step=".5" value="'+e.r+'"><input id="ma" type="number" step=".5" value="'+e.c+'"></div><button onclick="saveEmp(\''+esc(id)+'\')">حفظ التعديلات</button><div id="mm"></div></div>';$('modal').classList.remove('hidden')}
+async function saveEmp(id){if(!isAdmin())return msg('mm','هذه العملية متاحة للـAdmin فقط.');try{const code=$('mc').value.trim(),name=$('mn').value.trim(),r=+$('mr').value||0,c=+$('ma').value||0;if(!code||!name)return msg('mm','أكمل البيانات');if(r<0||c<0)return msg('mm','الأرصدة لا يمكن أن تكون سالبة');const dup=await db.from('employees').select('id').eq('code',code).neq('id',id).limit(1);if(dup.error)return msg('mm',friendlyError(dup.error));if(dup.data&&dup.data.length)return msg('mm','كود الموظف مستخدم بالفعل.');let z=await db.from('employees').update({code,name}).eq('id',id);if(z.error)return msg('mm',friendlyError(z.error));const a=await saveEntitlement(id,S.year,r,c);if(!a.ok)return msg('mm','تم تعديل الموظف، لكن لم يتم حفظ الرصيد: '+friendlyError(a.error));closeM();await load()}catch(e){msg('mm',friendlyError(e),false)}}
+async function delEmp(id){if(!isAdmin())return alert('هذه العملية متاحة للـAdmin فقط.');if(!confirm('حذف الموظف وكل إجازاته؟'))return;try{const z=await db.from('employees').delete().eq('id',id);if(z.error)alert(friendlyError(z.error));else await load()}catch(e){alert(e.message||String(e))}}
+async function addLeave(){if(!isAdmin())return msg('lmsg','تسجيل الإجازات متاح للـAdmin فقط.');try{const employee_id=$('le').value,type=$('lt').value,date=$('ld').value,days=+$('ldays').value||0,notes=$('ln').value.trim();if(!employee_id||!date||days<=0)return msg('lmsg','أكمل البيانات');const z=await db.from('leave_entries').insert({employee_id,leave_type:type,leave_date:date,days,notes});if(z.error)return msg('lmsg',friendlyError(z.error));msg('lmsg','تم تسجيل الإجازة',true);$('ldays').value='';$('ln').value='';await load()}catch(e){msg('lmsg',e.message||String(e))}}
+function empOf(l){return S.e.find(e=>e.id===l.employee_id)||{code:'—',name:'محذوف'}}
+function renderLeaves(){const q=($('ls').value||'').toLowerCase(),typ=$('lf').value,mo=$('lm').value,d=S.l.filter(l=>{const e=empOf(l);return(!q||String(e.name).toLowerCase().includes(q)||String(e.code).toLowerCase().includes(q))&&(!typ||l.leave_type===typ)&&(!mo||String(l.leave_date).startsWith(mo))}),admin=isAdmin();$('leaveTable').innerHTML=d.length?'<div class="table"><table><thead><tr><th>التاريخ</th><th>الكود</th><th>الموظف</th><th>النوع</th><th>الأيام</th><th>ملاحظات</th>'+(admin?'<th>إجراءات</th>':'')+'</tr></thead><tbody>'+d.map(l=>{const e=empOf(l);return '<tr><td>'+esc(l.leave_date)+'</td><td>'+esc(e.code)+'</td><td>'+esc(e.name)+'</td><td>'+esc(l.leave_type)+'</td><td>'+f(l.days)+'</td><td>'+esc(l.notes||'')+'</td>'+(admin?'<td><div class="actions"><button class="secondary small" onclick="editLeave(\''+esc(l.id)+'\')">تعديل</button><button class="danger small" onclick="delLeave(\''+esc(l.id)+'\')">حذف</button></div></td>':'')+'</tr>'}).join('')+'</tbody></table></div>':'<div class="empty">لا توجد سجلات</div>'}
+function editLeave(id){if(!isAdmin())return;const l=S.l.find(x=>x.id===id);if(!l)return;$('modalTitle').textContent='تعديل الإجازة';$('modalBody').innerHTML='<div class="grid"><select id="me">'+S.e.map(e=>'<option value="'+esc(e.id)+'" '+(e.id===l.employee_id?'selected':'')+'>'+esc(e.code)+' — '+esc(e.name)+'</option>').join('')+'</select><select id="mtype"><option '+(l.leave_type==='اعتيادي'?'selected':'')+'>اعتيادي</option><option '+(l.leave_type==='عارضة'?'selected':'')+'>عارضة</option></select><input id="md" type="date" value="'+esc(l.leave_date)+'"><input id="mx" type="number" step=".5" value="'+esc(l.days)+'"><input id="mnote" value="'+esc(l.notes||'')+'"><button onclick="saveLeave(\''+esc(id)+'\')">حفظ التعديل</button><div id="mm"></div></div>';$('modal').classList.remove('hidden')}
+async function saveLeave(id){if(!isAdmin())return msg('mm','هذه العملية متاحة للـAdmin فقط.');try{const p={employee_id:$('me').value,leave_type:$('mtype').value,leave_date:$('md').value,days:+$('mx').value,notes:$('mnote').value.trim()};if(!p.leave_date||p.days<=0)return msg('mm','أكمل البيانات');const z=await db.from('leave_entries').update(p).eq('id',id);if(z.error)return msg('mm',friendlyError(z.error));closeM();await load()}catch(e){msg('mm',e.message||String(e))}}
+async function delLeave(id){if(!isAdmin())return alert('هذه العملية متاحة للـAdmin فقط.');if(!confirm('حذف سجل الإجازة؟'))return;try{const z=await db.from('leave_entries').delete().eq('id',id);if(z.error)alert(friendlyError(z.error));else await load()}catch(e){alert(e.message||String(e))}}
+function changeReportYear(v){$('year').value=String(v);safeLoad()}
+function resetReportFilters(){$('reportEmp').value='';$('reportType').value='';$('reportMonth').value='';$('reportSearch').value='';renderReport()}
+function reportEmployees(){const el=$('reportEmp'),cur=el.value;el.innerHTML='<option value="">كل الموظفين</option>'+S.e.slice().sort((a,b)=>String(a.name).localeCompare(String(b.name),'ar')).map(e=>'<option value="'+esc(e.id)+'">'+esc(e.code)+' — '+esc(e.name)+'</option>').join('');if(S.e.some(e=>String(e.id)===String(cur)))el.value=cur}
+function reportRows(){const emp=$('reportEmp').value,type=$('reportType').value,month=$('reportMonth').value,q=($('reportSearch').value||'').trim().toLowerCase(),ids=q?new Set(S.e.filter(e=>employeeSearchMatch(e,q)).map(e=>String(e.id))):null;return S.l.filter(l=>{const e=empOf(l);return(!emp||String(l.employee_id)===String(emp))&&(!ids||ids.has(String(l.employee_id)))&&(!type||l.leave_type===type)&&(!month||String(l.leave_date||'').slice(5,7)===month)})}
+function reportEmpSet(rows){const selected=$('reportEmp').value,q=($('reportSearch').value||'').trim().toLowerCase();if(selected)return S.e.filter(e=>String(e.id)===String(selected));if(q)return S.e.filter(e=>employeeSearchMatch(e,q));return S.e.slice()}
+function elapsedMonths(){const y=S.year,now=new Date(),cy=now.getFullYear();if(y<cy)return 12;if(y>cy)return 0;return Math.min(12,Math.max(1,now.getMonth()+1))}
+function usageStatus(e){const s=sum(e),months=elapsedMonths(),expected=(s.b/12)*months,used=s.u,pct=expected>0?(used/expected*100):0,annualPct=s.b>0?(used/s.b*100):0,delta=used-expected;let cls='statusGood',icon='✓',title='استهلاك طبيعي';if(delta>4){cls='statusBad';icon='!';title='أعلى من الطبيعي بأكثر من 4 أيام'}else if(delta>2){cls='statusWarn';icon='!';title='أعلى من الطبيعي بأكثر من يومين'}return{s,months,expected,used,pct,annualPct,delta,cls,icon,title}}
+function reportStatus(){const all=S.e.slice().map(e=>usageStatus(e)).sort((a,b)=>b.pct-a.pct),selected=$('reportEmp').value,q=($('reportSearch').value||'').trim().toLowerCase();let d=selected?all.filter(x=>String(x.s.id)===String(selected)):q?all.filter(x=>employeeSearchMatch(x.s,q)):all;const bad=d.filter(x=>x.delta>4),warn=d.filter(x=>x.delta>2&&x.delta<=4),good=d.filter(x=>x.delta<=2);$('reportStatus').innerHTML='<div class="grid reportGrid3"><div class="statusCard statusBad"><div class="statusIcon">'+bad.length+'</div><div class="statusInfo"><b>🔴 استهلاك مرتفع</b><span class="statusMeta">أعلى من الطبيعي بأكثر من 4 أيام</span></div></div><div class="statusCard statusWarn"><div class="statusIcon">'+warn.length+'</div><div class="statusInfo"><b>🟡 يحتاج متابعة</b><span class="statusMeta">أعلى من الطبيعي بأكثر من يومين</span></div></div><div class="statusCard statusGood"><div class="statusIcon">'+good.length+'</div><div class="statusInfo"><b>🟢 جيد</b><span class="statusMeta">ضمن الطبيعي</span></div></div></div>'+(d.length?d.slice(0,15).map(x=>'<div class="statusCard '+x.cls+'"><div class="statusIcon">'+x.icon+'</div><div class="statusInfo"><b>'+esc(x.s.name)+'</b><span class="statusMeta">'+x.title+' · المستخدم '+f(x.used)+' يوم · المتوقع '+f(x.expected)+' يوم · '+Math.round(x.pct)+'% من المتوقع</span><div class="usageMeter '+(x.delta>4?'bad':x.delta>2?'warn':'')+'"><i style="width:'+Math.min(100,x.pct)+'%"></i></div></div><span class="usagePct">'+Math.round(x.annualPct)+'%</span></div>').join(''):'<div class="empty">لا توجد بيانات</div>')}
+function reportMonthly(rows){const vals=Array(12).fill(0),names=['ينا','فبر','مار','أبر','ماي','يون','يول','أغس','سبت','أكت','نوف','ديس'];rows.forEach(l=>{const m=parseInt(String(l.leave_date||'').slice(5,7),10);if(m>=1&&m<=12)vals[m-1]+=+(l.days||0)});const max=Math.max(...vals,1);$('reportMonthChart').innerHTML='<div class="reportBars">'+vals.map((v,i)=>'<button class="rbarBtn" title="عرض '+names[i]+'" onclick="$(\'#reportMonth\').value=\''+String(i+1).padStart(2,'0')+'\';renderReport()"><span class="rbarVal">'+f(v)+'</span><div class="rbar" style="height:'+Math.max(3,v/max*205)+'px"></div><span class="rbarLab">'+names[i]+'</span></button>').join('')+'</div><div class="clickHint">💡 اضغط على أي شهر لتصفية التقرير</div>'}
+function reportDonut(rows){const r=rows.filter(x=>x.leave_type==='اعتيادي').reduce((s,x)=>s+(+x.days||0),0),c=rows.filter(x=>x.leave_type==='عارضة').reduce((s,x)=>s+(+x.days||0),0),tot=r+c,deg=tot?r/tot*360:0;$('reportDonut').innerHTML='<div class="donut" style="background:conic-gradient(#18b97e 0deg '+deg+'deg,#5b7082 '+deg+'deg 360deg)"><div class="donutCenter">'+f(tot)+'</div></div><div class="legend"><div class="legendRow"><i class="dot"></i><span>اعتيادي: <b>'+f(r)+'</b> يوم</span></div><div class="legendRow"><i class="dot casual"></i><span>عارضة: <b>'+f(c)+'</b> يوم</span></div><div class="muted">نسبة الاعتيادي: '+(tot?Math.round(r/tot*100):0)+'%</div></div>'}
+function reportRanking(rows){const m=new Map();rows.forEach(l=>{const id=String(l.employee_id);m.set(id,(m.get(id)||0)+(+l.days||0))});const d=[...m.entries()].map(([id,u])=>{const e=S.e.find(x=>String(x.id)===id)||{name:'محذوف',code:'—'};return{...e,u}}).sort((a,b)=>b.u-a.u).slice(0,8),mx=Math.max(d[0]?.u||1,1);$('reportRanking').innerHTML=d.length?d.map((e,i)=>'<div class="rank"><b class="n">'+(i+1)+'</b><div class="who"><b>'+esc(e.name)+'</b><div class="prog"><i style="width:'+(e.u/mx*100)+'%"></i></div></div><b>'+f(e.u)+'</b></div>').join(''):'<div class="empty">لا توجد بيانات مطابقة</div>'}
+function reportInsights(rows,emps){const total=rows.reduce((s,l)=>s+(+l.days||0),0),regular=rows.filter(x=>x.leave_type==='اعتيادي').reduce((s,x)=>s+(+x.days||0),0),casual=total-regular,en=emps.map(e=>{const u=rows.filter(l=>String(l.employee_id)===String(e.id)).reduce((s,l)=>s+(+l.days||0),0);return{e,u}}).sort((a,b)=>b.u-a.u),top=en[0],avg=emps.length?total/emps.length:0;$('reportInsights').innerHTML='<div class="insight"><b>📌 إجمالي السجلات</b>'+rows.length+' سجل إجازة</div><div class="insight"><b>📊 متوسط الاستخدام</b>'+f(avg)+' يوم لكل موظف</div><div class="insight"><b>🏆 الأعلى استخدامًا</b>'+(top?esc(top.e.name)+' — '+f(top.u)+' يوم':'لا توجد بيانات')+'</div><div class="insight"><b>⚖️ التوزيع</b>اعتيادي '+f(regular)+' يوم · عارضة '+f(casual)+' يوم</div>'}
+function renderReport(){reportEmployees();const rows=reportRows(),emps=reportEmpSet(rows),balance=emps.reduce((s,e)=>s+sum(e).b,0),used=rows.reduce((s,l)=>s+(+l.days||0),0),remaining=emps.reduce((s,e)=>s+sum(e).rem,0);$('rkE').textContent=emps.length;$('rkB').textContent=f(balance);$('rkU').textContent=f(used);$('rkR').textContent=f(remaining);const mo=$('reportMonth').value,type=$('reportType').value;$('reportPeriod').textContent=(mo?$('reportMonth').selectedOptions[0].text:'كل الشهور')+(type?' · '+type:'');$('reportYear').value=String(S.year);reportStatus();reportMonthly(rows);reportDonut(rows);reportRanking(rows);reportInsights(rows,emps);$('reportCount').textContent=rows.length+' سجل';const detail=emps.slice().sort((a,b)=>sum(b).u-sum(a).u);$('reportTable').innerHTML=detail.length?'<div class="table reportTableWrap"><table><thead><tr><th>الكود</th><th>الموظف</th><th>الرصيد</th><th>المستخدم</th><th>المتوقع حتى الآن</th><th>الاستهلاك</th><th>المتبقي</th><th>الحالة</th></tr></thead><tbody>'+detail.map(e=>{const s=sum(e),st=usageStatus(e),label=st.delta>4?'<span class="badge bad">🔴 أعلى من 4 أيام</span>':st.delta>2?'<span class="badge warn">🟡 أعلى من يومين</span>':'<span class="badge ok">🟢 طبيعي</span>';return '<tr class="clickableRow" title="اضغط لتصفية الموظف" onclick="$(\'#reportEmp\').value=\''+esc(e.id)+'\';renderReport()"><td>'+esc(e.code)+'</td><td>'+esc(e.name)+'</td><td>'+f(s.b)+'</td><td>'+f(s.u)+'</td><td>'+f(st.expected)+'</td><td>'+Math.round(st.pct)+'%</td><td>'+f(s.rem)+'</td><td>'+label+'</td></tr>'}).join('')+'</tbody></table></div>':'<div class="empty">لا توجد بيانات مطابقة للفلاتر</div>'}
+function switchReportDash(n){[1,2,3].forEach(i=>{$('reportDash'+i).classList.toggle('hidden',i!==n);$('rd'+i).classList.toggle('active',i===n)});if(n===2)renderConsumptionDash();if(n===3)renderLeaveAnalytics()}
+function employeeSearchMatch(e,q){q=(q||'').trim().toLowerCase();return !q||String(e.name||'').toLowerCase().includes(q)||String(e.code||'').toLowerCase().includes(q)}
+function statusByDays(e){const st=usageStatus(e),delta=st.used-st.expected;let cls='statusGood',label='🟢 طبيعي';if(delta>4){cls='statusBad';label='🔴 أعلى من الطبيعي بأكثر من 4 أيام'}else if(delta>2){cls='statusWarn';label='🟡 أعلى من الطبيعي بأكثر من يومين'}return Object.assign({},st,{delta,cls,label})}
+function renderConsumptionDash(){const q=($('consumptionSearch')?.value||'').trim().toLowerCase(),months=elapsedMonths(),data=S.e.filter(e=>employeeSearchMatch(e,q)).map(statusByDays).sort((a,b)=>b.delta-a.delta),good=data.filter(x=>x.delta<=2),warn=data.filter(x=>x.delta>2&&x.delta<=4),bad=data.filter(x=>x.delta>4);$('consumptionPeriod').textContent=months+' شهر من السنة';$('consumptionKpis').innerHTML='<div class="miniKpi"><small>🟢 طبيعي</small><b class="stateGood">'+good.length+'</b><small>موظف</small></div><div class="miniKpi"><small>🟡 تجاوز أكثر من يومين</small><b class="stateWarn">'+warn.length+'</b><small>موظف</small></div><div class="miniKpi"><small>🔴 تجاوز أكثر من 4 أيام</small><b class="stateBad">'+bad.length+'</b><small>موظف</small></div><div class="miniKpi"><small>👥 الإجمالي</small><b>'+data.length+'</b><small>موظف</small></div>';
+$('consumptionTable').innerHTML=data.length?'<div class="table reportTableWrap"><table><thead><tr><th>الموظف</th><th>الرصيد السنوي</th><th>المستحق حتى الآن</th><th>المستخدم</th><th>استهلك %</th><th>المتبقي %</th><th>الفرق بالأيام</th><th>الحالة</th></tr></thead><tbody>'+data.map(x=>{const s=x.s,cons=s.b>0?s.u/s.b*100:0,rem=s.b>0?Math.max(0,s.rem)/s.b*100:0,bar=Math.min(100,Math.max(0,cons));return '<tr><td><b>'+esc(s.name)+'</b><br><small>'+esc(s.code)+'</small></td><td>'+f(s.b)+'</td><td>'+f(x.expected)+'</td><td>'+f(s.u)+'</td><td>'+Math.round(cons)+'%</td><td>'+Math.round(rem)+'%</td><td>'+f(x.delta)+'</td><td><span class="badge '+(x.delta>4?'bad':x.delta>2?'warn':'ok')+'">'+x.label+'</span><div class="percentBar '+(x.delta>4?'bad':x.delta>2?'warn':'')+'" style="margin-top:7px"><i style="width:'+bar+'%"></i></div></td></tr>'}).join('')+'</tbody></table></div>':'<div class="searchResultEmpty">لا توجد نتائج للبحث</div>'}
+function renderLeaveAnalytics(){const rows=reportRows(),total=rows.reduce((s,l)=>s+(+l.days||0),0),regular=rows.filter(x=>x.leave_type==='اعتيادي').reduce((s,x)=>s+(+x.days||0),0),casual=total-regular,employees=new Set(rows.map(x=>String(x.employee_id))).size;let maxEmp='لا يوجد',maxDays=0;const mm=new Map();rows.forEach(l=>{const id=String(l.employee_id),d=(mm.get(id)||0)+(+l.days||0);mm.set(id,d);if(d>maxDays){maxDays=d;const e=S.e.find(x=>String(x.id)===id);if(e)maxEmp=e.name}});$('leaveAnalyticsTotal').textContent=f(total)+' يوم';$('leaveAnalyticsKpis').innerHTML='<div class="analyticsBox"><small>👥 موظفون لديهم إجازات</small><b>'+employees+'</b></div><div class="analyticsBox"><small>📘 اعتيادي</small><b>'+f(regular)+'</b><small>يوم</small></div><div class="analyticsBox"><small>📙 عارضة</small><b>'+f(casual)+'</b><small>يوم</small></div>';
+const vals=Array(12).fill(0),names=['ينا','فبر','مار','أبر','ماي','يون','يول','أغس','سبت','أكت','نوف','ديس'];rows.forEach(l=>{const m=parseInt(String(l.leave_date||'').slice(5,7),10);if(m>=1&&m<=12)vals[m-1]+=+(l.days||0)});const mx=Math.max(...vals,1);$('analyticsMonthChart').innerHTML='<div class="reportBars">'+vals.map((v,i)=>'<div class="rbarBtn"><span class="rbarVal">'+f(v)+'</span><div class="rbar" style="height:'+Math.max(3,v/mx*205)+'px"></div><span class="rbarLab">'+names[i]+'</span></div>').join('')+'</div>';
+const deg=total?regular/total*360:0;$('analyticsTypeChart').innerHTML='<div class="donut" style="background:conic-gradient(#18b97e 0deg '+deg+'deg,#5b7082 '+deg+'deg 360deg)"><div class="donutCenter">'+f(total)+'</div></div><div class="legend"><div>🟢 اعتيادي: '+f(regular)+' يوم</div><div>⚪ عارضة: '+f(casual)+' يوم</div></div>';
+const ranks=[...mm.entries()].map(([id,u])=>({e:S.e.find(x=>String(x.id)===id),u})).filter(x=>x.e).sort((a,b)=>b.u-a.u).slice(0,10),rmax=Math.max(ranks[0]?.u||1,1);$('analyticsRanking').innerHTML=ranks.length?ranks.map((x,i)=>'<div class="rank"><b class="n">'+(i+1)+'</b><div class="who"><b>'+esc(x.e.name)+'</b><div class="prog"><i style="width:'+(x.u/rmax*100)+'%"></i></div></div><b>'+f(x.u)+' يوم</b></div>').join(''):'<div class="empty">لا توجد بيانات</div>';
+const statuses=S.e.map(statusByDays),bd=statuses.filter(x=>x.delta>4),wd=statuses.filter(x=>x.delta>2&&x.delta<=4),gd=statuses.filter(x=>x.delta<=2);$('analyticsAlerts').innerHTML='<div class="notice bad">🔴 أعلى من الطبيعي بأكثر من 4 أيام: <b>'+bd.length+'</b> موظف</div><div class="notice warn">🟡 أعلى من الطبيعي بأكثر من يومين: <b>'+wd.length+'</b> موظف</div><div class="notice good">🟢 ضمن الطبيعي: <b>'+gd.length+'</b> موظف</div><div class="notice">🏆 الأعلى استخدامًا: <b>'+esc(maxEmp)+'</b> — '+f(maxDays)+' يوم</div>'}
+
+function csvReport(){const rows=reportRows(),out=[['الكود','الاسم','نوع الإجازة','التاريخ','الأيام','ملاحظات'],...rows.map(l=>{const e=empOf(l);return[e.code,e.name,l.leave_type,l.leave_date,l.days,l.notes||'']})],s='\ufeff'+out.map(r=>r.map(x=>'"'+String(x??'').replaceAll('"','""')+'"').join(',')).join('\n'),blob=new Blob([s],{type:'text/csv;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='leave-dashboard-'+S.year+'.csv';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000)}
+function csv(){try{const rows=[['الكود','الاسم','اعتيادي','عارضة','الرصيد','المستخدم','المتبقي'],...all().map(e=>[e.code,e.name,e.r,e.c,e.b,e.u,e.rem])];const s='\ufeff'+rows.map(r=>r.map(x=>'"'+String(x??'').replaceAll('"','""')+'"').join(',')).join('\n');const blob=new Blob([s],{type:'text/csv;charset=utf-8'});const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='leave-report-'+S.year+'.csv';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000)}catch(e){alert(e.message||String(e))}}
+function normHeader(v){return String(v??'').trim().toLowerCase().replace(/[\s_\-]+/g,'').replace(/[أإآ]/g,'ا').replace(/ة/g,'ه')}
+function findExcelCol(headers,aliases){const nh=headers.map(normHeader);for(const a of aliases){const i=nh.indexOf(normHeader(a));if(i>=0)return i}return -1}
+function excelRows(){if(!excelWorkbook)throw new Error('ارفع ملف Excel أولًا');const sn=$('excelSheet').value||excelWorkbook.SheetNames[0];if(!sn)throw new Error('لم يتم العثور على ورقة في الملف');const ws=excelWorkbook.Sheets[sn];const rows=XLSX.utils.sheet_to_json(ws,{header:1,defval:''});if(!rows.length)throw new Error('الورقة فارغة');const headers=rows[0].map(x=>String(x??'').trim());const ci=findExcelCol(headers,['الكود','كود الموظف','code','employee code','id']);const ni=findExcelCol(headers,['الاسم','اسم الموظف','name','employee name','employee']);const ri=findExcelCol(headers,['اعتيادي','رصيد اعتيادي','الرصيد الاعتيادي','regular','regular days','annual','annual days']);const ai=findExcelCol(headers,['عارضة','رصيد عارضة','الرصيد العارضة','casual','casual days']);if(ni<0)throw new Error('لم أجد عمود الاسم. استخدم اسم العمود: الاسم');if(ri<0&&ai<0)throw new Error('لم أجد أعمدة الأرصدة. استخدم اعتيادي و/أو عارضة');const out=[];for(let r=1;r<rows.length;r++){const row=rows[r]||[],name=String(row[ni]??'').trim();if(!name)continue;const code=ci>=0?String(row[ci]??'').trim():'';const regular=ri>=0?Number(String(row[ri]??'').replace(',','.'))||0:0;const casual=ai>=0?Number(String(row[ai]??'').replace(',','.'))||0:0;if(regular<0||casual<0)continue;out.push({code,name,regular,casual,row:r+1})}return out}
+async function readExcelFile(){const file=$('excelFile')?.files?.[0];if(!file)throw new Error('اختر ملف Excel أولًا');if(typeof XLSX==='undefined')throw new Error('مكتبة Excel لم تُحمّل. تأكد من الإنترنت ثم أعد فتح الصفحة');const data=await file.arrayBuffer();excelWorkbook=XLSX.read(data,{type:'array'});const sel=$('excelSheet');sel.innerHTML=excelWorkbook.SheetNames.map(n=>'<option value="'+esc(n)+'">'+esc(n)+'</option>').join('');return excelRows()}
+async function previewExcel(){if(!isAdmin())return msg('excelMsg','معاينة Excel متاحة للـAdmin فقط.',false);try{const rows=await readExcelFile();const show=rows.slice(0,10);$('excelPreview').innerHTML='<div class="table"><table style="min-width:650px"><thead><tr><th>#</th><th>الكود</th><th>الاسم</th><th>اعتيادي</th><th>عارضة</th></tr></thead><tbody>'+show.map((x,i)=>'<tr><td>'+(i+1)+'</td><td>'+esc(x.code||'سيتم إنشاؤه')+'</td><td>'+esc(x.name)+'</td><td>'+f(x.regular)+'</td><td>'+f(x.casual)+'</td></tr>').join('')+'</tbody></table></div><p class="muted">إجمالي الصفوف الصالحة: <b>'+rows.length+'</b> · المعروض أول 10 فقط.</p>';msg('excelMsg','تمت قراءة الملف بنجاح. راجع المعاينة ثم اضغط استيراد إلى النظام.',true)}catch(e){msg('excelMsg',friendlyError(e),false)}}
+async function importExcel(){if(!isAdmin())return msg('excelMsg','استيراد Excel متاح للـAdmin فقط.',false);try{const rows=excelWorkbook?excelRows():await readExcelFile();if(!rows.length)return msg('excelMsg','لا توجد صفوف صالحة للاستيراد.',false);const year=S.year;let added=0,updated=0,skipped=0,errors=[];msg('excelMsg','جاري الاستيراد... 0 / '+rows.length,true);for(let i=0;i<rows.length;i++){const x=rows[i];try{let employee=null;if(x.code){const q=await db.from('employees').select('*').eq('code',x.code).limit(1);if(q.error)throw q.error;if(q.data?.length)employee=q.data[0]}else{const q=await db.from('employees').select('*').eq('name',x.name).limit(1);if(q.error)throw q.error;if(q.data?.length)employee=q.data[0]}if(!employee){let code=x.code||('EXCEL-'+String(i+1).padStart(3,'0'));let exists=await db.from('employees').select('id,code').eq('code',code).limit(1);if(exists.error)throw exists.error;if(exists.data?.length){let n=2,base=code;while(exists.data?.length){code=base+'-'+n++;exists=await db.from('employees').select('id').eq('code',code).limit(1);if(exists.error)throw exists.error}}const ins=await db.from('employees').insert({code,name:x.name,active:true}).select().single();if(ins.error)throw ins.error;employee=ins.data;added++}else{const up=await db.from('employees').update({name:x.name,active:true}).eq('id',employee.id);if(up.error)throw up.error;updated++}const entRes=await saveEntitlement(employee.id,year,x.regular,x.casual);if(!entRes.ok)throw entRes.error;msg('excelMsg','جاري الاستيراد... '+(i+1)+' / '+rows.length,true)}catch(err){skipped++;errors.push('صف '+x.row+' — '+(err?.message||String(err)));}}await load();let text='تم الاستيراد: '+added+' جديد، '+updated+' محدث، '+skipped+' لم يتم استيراده.';if(errors.length)text+=' أول الأخطاء: '+errors.slice(0,3).join(' | ');msg('excelMsg',text,skipped===0)}catch(e){msg('excelMsg',friendlyError(e),false)}}
+function closeM(){$('modal').classList.add('hidden')}
+window.tab=tab;window.safeLoad=safeLoad;window.addEmp=addEmp;window.editEmp=editEmp;window.saveEmp=saveEmp;window.delEmp=delEmp;window.addLeave=addLeave;window.editLeave=editLeave;window.saveLeave=saveLeave;window.delLeave=delLeave;window.csv=csv;window.closeM=closeM;window.render=render;window.renderEmp=renderEmp;window.renderLeaves=renderLeaves;window.renderReport=renderReport;window.resetReportFilters=resetReportFilters;window.changeReportYear=changeReportYear;window.csvReport=csvReport;window.switchReportDash=switchReportDash;window.renderConsumptionDash=renderConsumptionDash;window.renderLeaveAnalytics=renderLeaveAnalytics;window.previewExcel=previewExcel;window.importExcel=importExcel;
+window.login=login;window.signUp=signUp;window.signOut=signOut;window.loginEmployeeCode=loginEmployeeCode;window.employeeSignOut=employeeSignOut;window.showLoginMode=showLoginMode;
+window.onYearChange=onYearChange;window.onSearchChange=onSearchChange;window.focusUsage=focusUsage;window.focusLowBalance=focusLowBalance;window.clearDashFilter=clearDashFilter;window.copyDashLink=copyDashLink;
+  function start(){
+    // Employee code login is the default entry point; Admin keeps Supabase email/password login.
+    setTimeout(()=>showLoginMode('employee'),0);
+    if(window.supabase){return finishStart()}
+    const s=document.createElement('script');
+    s.src='https://unpkg.com/@supabase/supabase-js@2';
+    s.onload=()=>window.supabase?finishStart():showMsg('تعذر تحميل مكتبة Supabase. جرّب تحديث الصفحة.',false);
+    s.onerror=()=>showMsg('تعذر تحميل مكتبة Supabase. تأكد من الإنترنت أو جرّب Chrome ثم أعد فتح الصفحة.',false);
+    document.head.appendChild(s);
+  }
+  function finishStart(){
+    try{
+      db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+      db.auth.onAuthStateChange((event,session)=>{
+        if(event==='SIGNED_OUT')boot(null);
+        else if(session&&(event==='SIGNED_IN'||event==='INITIAL_SESSION'))boot(session)
+      });
+      db.auth.getSession().then(({data,error})=>{
+        if(error)throw error;
+        boot(data.session)
+      }).catch(e=>showMsg(friendlyAuthError(e),false));
+    }catch(e){showMsg(friendlyAuthError(e),false)}
+  }
+  start()
+})();
+</script>
+</body>
+</html>
